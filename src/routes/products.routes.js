@@ -1,7 +1,10 @@
 import { Router } from "express";
-import {createProduct,getProducts} from "../controllers/products.controller.js"
+import { createProduct, getProducts } from "../controllers/products.controller.js"
+import { validateCreateProduct } from "../validators/product.validation.js"
 
-export const productRouter = Router();
+const router = Router();
 
-productRouter.get("/products", getProducts)
-productRouter.post("/product", createProduct)
+router.get("/products", getProducts)
+router.post("/product", validateCreateProduct, createProduct)
+
+export default router

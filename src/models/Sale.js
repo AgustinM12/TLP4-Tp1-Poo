@@ -1,15 +1,19 @@
 import { model, Schema } from "mongoose"
 
-const ProductSchema = new Schema({
+const SaleSchema = new Schema({
 
     date: Date,
     products: String,
     totalPrice: Number,
+    price: Number,
+    taxes: Number,
+    discount:Number,
     user: String,
 
 }, {
     timestamps: true
 })
 
+SaleSchema.
 
-export const Product = model("products", ProductSchema)
+export const Sale = model("sales", SaleSchema)

@@ -2,7 +2,7 @@ import express from "express"
 import cors from "cors"
 import morgan from "morgan"
 import { PORT } from "../config/config.js"
-import { productRouter } from "../routes/products.routes.js"
+import productRouter from "../routes/products.routes.js"
 import { dbConnection } from "../db/connectionDB.js"
 
 class Server {
@@ -28,11 +28,11 @@ class Server {
     }
 
     routes() {
-        this.app.use(("/api", productRouter));
+        this.app.use("/api", productRouter);
     }
 
     listen() {
-        this.app.listen(this.port, () => console.log("Servidor corriendo en http://localhost:"+ this.port))
+        this.app.listen(this.port, () => console.log("Servidor corriendo en http://localhost:" + this.port))
     }
 }
 
