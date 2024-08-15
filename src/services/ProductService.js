@@ -1,26 +1,26 @@
 import { Product } from "../models/Product.js";
 
 class ProductService {
-    constructor() {}
+    constructor() { }
 
     async findAll() {
         return await Product.find()
     }
-    
-    async findOne(_id) {
-        return await Product.findById(_id)
+
+    async findOne(id) {
+        return await Product.findById(id)
     }
 
     async create(product) {
         return await Product.create(product)
     }
 
-    async update(product) {
-        return await Product.findByIdAndUpdate(product)
+    async update(id, product) {
+        return await Product.findByIdAndUpdate(id, product)
     }
 
-    async delete(_id) {
-        return await Product.findByIdAndDelete(_id)
+    async delete(id) {
+        return await Product.findByIdAndDelete(id)
     }
 
 }

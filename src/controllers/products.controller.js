@@ -20,9 +20,9 @@ export const getProducts = async (req, res) => {
     }
 }
 
-export const getOneProduct = async (req, res) => {
+export const getProduct = async (req, res) => {
     try {
-        const product = await ProductService.findOne(req.body._id);
+        const product = await ProductService.findOne(req.params.id);
         if (!product) {
             throw ({
                 statusCode: 404,
@@ -30,7 +30,7 @@ export const getOneProduct = async (req, res) => {
                 message: "No se encontro el producto",
             });
         }
-        return res.json(products)
+        return res.json(product)
 
     } catch (error) {
         return res.status(error.statusCode || 500).json({
@@ -56,7 +56,7 @@ export const createProduct = async (req, res) => {
 
 export const updateProduct = async (req, res) => {
     try {
-        await ProductService.update(req.body)
+        await ProductService.update(req.params.id, req.body)
         return res.status(201).json({
             message: 'Producto actualizado'
         })
@@ -70,7 +70,7 @@ export const updateProduct = async (req, res) => {
 
 export const deleteProduct = async (req, res) => {
     try {
-        await ProductService.delete(req.body._id)
+        await ProductService.delete(req.params.id)
         return res.status(201).json({
             message: 'Producto Eliminado'
         })
