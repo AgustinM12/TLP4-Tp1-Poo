@@ -2,14 +2,15 @@ import { model, Schema } from "mongoose"
 
 const ProductSchema = new Schema({
 
-    name: String,
-    desc: String,
-    price: Number,
-    category: String,
-    stock: Number,
+    name: { type: String, required: true },
+    desc: { type: String, required: true },
+    price: { type: Number, required: true },
+    category: { type: String, required: true },
+    stock: { type: Number, required: true },
 
 }, {
-    timestamps: true
+    timestamps: true,
+    versionKey: 'version'
 })
 
 

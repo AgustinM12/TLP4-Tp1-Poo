@@ -76,7 +76,7 @@ export const createClient = async (req, res) => {
 
 export const createSeller = async (req, res) => {
     try {
-        await UserService.create(req.body)
+        await UserService.createSeller(req.body)
         return res.status(201).json({
             message: 'Vendedor registrado'
         })

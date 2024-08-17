@@ -12,8 +12,7 @@ class UserService {
         }
     }
 
-    async findByNameOrEmail(user) {
-
+    async findByNameOrEmail({ user }) {
         try {
             return await User.findOne({
                 $or: [
@@ -36,21 +35,31 @@ class UserService {
 
     async createClient(user) {
         try {
-            if (!user.role) {
-                return await User.create({ ...user, role: "CLIENT" });
+            const existClient = await this.findByNameOrEmail({ user: user.name })
+
+            if (!existClient) {
+                if (!user.role) {
+                    return await User.create({ ...user, role: "CLIENT" });
+                }
+            } else {
+                throw new Error("El nombre de usuario ya esta ocupado");
             }
         } catch (error) {
-            throw new Error("Error al crear usuario");
+            throw new Error(error.message || "Error al crear usuario");
         }
     }
 
     async createSeller(user) {
         try {
-            if (user) {
+            const existSeller = await this.findByNameOrEmail({ user: user.name })
+
+            if (!existSeller) {
                 return await User.create(user);
+            } else {
+                throw new Error("El nombre de usuario ya esta ocupado");
             }
         } catch (error) {
-            throw new Error("Error al crear usuario");
+            throw new Error(error.message || "Error al crear usuario");
         }
     }
 
@@ -71,7 +80,7 @@ class UserService {
 
     async login(data) {
         try {
-            const existUser = await this.findByNameOrEmail(data.user)
+            const existUser = await this.findByNameOrEmail({ user: data.user })
 
             const validPassword = await verifyPassword(data.password, existUser.password)
 

@@ -10,16 +10,6 @@ export const validateCliente = [
         .exists().withMessage("Debe escoger un nombre de usuario")
         .isAlphanumeric().withMessage("El nombre solo debe contener caracteres alfanumericos"),
 
-    check("role")
-        .optional()
-        .exists().withMessage("Debe escoger un rol")
-        .custom((value) => {
-            if (value !== 'Seller') {
-                throw new Error('El campo role debe ser "Seller"');
-            }
-            return true;
-        }).withMessage("El rol no es valido"),
-
     check("email")
         .exists().withMessage("Debe escoger un email")
         .isEmail(),
@@ -39,18 +29,17 @@ export const validateSeller = [
         .isAlphanumeric().withMessage("El nombre solo debe contener caracteres alfanumericos"),
 
     check("role")
-        .optional()
         .exists().withMessage("Debe escoger un rol")
         .custom((value) => {
-            if (value !== 'Seller') {
-                throw new Error('El campo role debe ser "Seller"');
+            if (value != 'SELLER' && value != 'CLIENT') {
+                throw new Error('El campo role debe ser "SELLER" o "CLIENT');
             }
             return true;
-        }).withMessage("El rol no es valido"),
+        }).withMessage('El campo role debe ser "SELLER" o "CLIENT'),
 
     check("email")
         .exists().withMessage("Debe escoger un email")
-        .isEmail(),
+        .isEmail().withMessage("Debe escoger un email valido"),
 
     check("password")
         .exists().withMessage("Debe escoger una contraseña")
@@ -68,6 +57,13 @@ export const validateLogin = [
 
     check("password")
         .exists().withMessage("Debe escoger una contraseña"),
+
+    validateSchema(allowedFields)
+]
+
+export const validateNameOrEmail = [
+    check("user")
+        .exists().withMessage("Debe escoger un nombre de usuario o email"),
 
     validateSchema(allowedFields)
 ]
