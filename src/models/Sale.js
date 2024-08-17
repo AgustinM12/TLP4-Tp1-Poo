@@ -14,6 +14,4 @@ const SaleSchema = new Schema({
     timestamps: true
 })
 
-SaleSchema.
-
 export const Sale = model("sales", SaleSchema)
