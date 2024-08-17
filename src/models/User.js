@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 // Definir el esquema de usuario
 const UserSchema = new Schema({
     name: { type: String, required: true },
+    email: { type: String, required: true },
     password: { type: String, required: true },
     role: { type: String, required: true }
 }, {
@@ -35,15 +36,17 @@ UserSchema.pre("save", async function (next) {
 
 // Verificar si ya existe un usuario ADMIN
 UserSchema.statics.createDefaultAdmin = async function () {
-    constUser = this;
+    const User = this;
 
-    const adminExists = awaitUser.findOne({ name: "ADMIN" });
+    const adminExists = await User.findOne({ name: "ADMIN" });
 
     if (!adminExists) {
         // Crear un nuevo usuario "ADMIN" con la contraseña "0000"
-        const admin = newUser({
+        const admin = new User({
             name: "ADMIN",
-            password: "0000",  // Esta será encriptada por el middlewarerole: "ADMIN"
+            password: "0000",
+            role: "ADMIN"
+            // Esta será encriptada por el middlewarerole: "ADMIN"
         });
         await admin.save();
         console.log("Usuario ADMIN creado por defecto");
