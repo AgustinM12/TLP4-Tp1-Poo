@@ -5,42 +5,80 @@ import { verifyPassword } from "../helpers/validatePassword.js"
 class UserService {
 
     async findOne(id) {
-        return await User.findById(id)
+        try {
+            return await User.findById(id)
+        } catch (error) {
+            throw new Error("No se encontro usuario");
+        }
     }
 
-    async findByNameOrEmail(nameOrEmail) {
-        return await User.find(nameOrEmail)
-    }
-
-    async findByRole(role) {
-        return await User.find(role)
-    }
-
-    async create(user) {
-
-        if (user.role) {
-            // ! crear cliente            
-            return await User.create(user)
-        } else {
-            // ! crear vendedor
-            return await User.create({ ...user, role: "CLIENT" });
+    async findByNameOrEmail({user}) {
+        console.log(user);
+        
+        try {
+            return await User.findOne({
+                $or: [
+                    { name: user },
+                    { email: user }
+                ]
+            });
+        } catch (error) {
+            throw new Error("No se encontró el usuario");
         }
     }
 
 
-    
+    async findByRole(role) {
+        try {
+            return await User.find(role)
+        } catch (error) {
+            throw new Error("No se encontraron usuarios");
+        }
+    }
+
+    async createClient(user) {
+        try {
+            if (!user.role) {
+                return await User.create({ ...user, role: "CLIENT" });
+            }
+        } catch (error) {
+            throw new Error("Error al crear usuario");
+        }
+    }
+
+    async createSeller(user) {
+        try {
+            if (user) {
+                return await User.create(user);
+            }
+        } catch (error) {
+            throw new Error("Erro al crear usuario");
+        }
+    }
+
     async delete(id) {
-        return await User.findByIdAndDelete(id)
+        try {
+            deletedUser = await this.findOne(id)
+
+            if (deletedUser.role !== "ADMIN") {
+                return await User.findByIdAndDelete(id)
+            }
+        } catch (error) {
+            throw new Error("No fue posible eliminar al usuario");
+        }
     }
 
     async login(data) {
+        try {
+            const existUser = this.findByNameOrEmail(data.user)
 
-        const existUser = this.findByNameOrEmail(data.user)
+            const validPassword = await verifyPassword(data.password, existUser.password)
 
-        const validPassword = await verifyPassword(data.password, existUser.password)
-
-        if (existUser && validPassword) {
-            return generateToken(existUser)
+            if (existUser && validPassword) {
+                return generateToken(existUser)
+            }
+        } catch (error) {
+            throw new Error("Error al iniciar sesion");
         }
     }
 

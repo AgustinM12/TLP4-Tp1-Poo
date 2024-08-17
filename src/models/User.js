@@ -45,6 +45,7 @@ UserSchema.statics.createDefaultAdmin = async function () {
         const admin = new User({
             name: "ADMIN",
             password: "0000",
+            email: "adminEmail@gmail.com",
             role: "ADMIN"
             // Esta será encriptada por el middlewarerole: "ADMIN"
         });
