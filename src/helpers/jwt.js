@@ -5,7 +5,8 @@ export const generateToken = (user) => {
     const tokenPayload = {
         id: user._id,
         username: user.username,
-        email: user.email
+        email: user.email,
+        role: user.role
     };
 
     // ! Crear el token con duracion de una hora
@@ -25,7 +26,7 @@ export const verifyToken = (req, res, next) => {
 
     try {
         //! Verificar el token
-        const decoded = jwt.verify(token.split(' ')[1], secretKey);
+        const decoded = jwt.verify(token, secretKey);
 
         req.user = decoded;
 
@@ -34,3 +35,27 @@ export const verifyToken = (req, res, next) => {
         return res.status(401).json({ message: 'Token no válido.' });
     }
 }
+
+export const verifyAdminOrSeller = (req, res, next) => {
+
+    const { role } = req.user;
+
+    // ! Verificar si el rol es "ADMIN" o "SELLER"
+    if (role === "ADMIN" || role === "SELLER") {
+        next(); // Permitir el acceso
+    } else {
+        return res.status(403).json({ message: 'Acceso denegado. Requiere rol de ADMIN o SELLER.' });
+    }
+};
+
+export const verifyAdmin = (req, res, next) => {
+
+    const { role } = req.user;
+
+    // ! Verificar si el rol es "ADMIN" o "SELLER"
+    if (role === "ADMIN") {
+        next(); // Permitir el acceso
+    } else {
+        return res.status(403).json({ message: 'Acceso denegado. Requiere rol de ADMIN.' });
+    }
+};

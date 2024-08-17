@@ -12,9 +12,8 @@ class UserService {
         }
     }
 
-    async findByNameOrEmail({user}) {
-        console.log(user);
-        
+    async findByNameOrEmail(user) {
+
         try {
             return await User.findOne({
                 $or: [
@@ -26,7 +25,6 @@ class UserService {
             throw new Error("No se encontró el usuario");
         }
     }
-
 
     async findByRole(role) {
         try {
@@ -52,16 +50,19 @@ class UserService {
                 return await User.create(user);
             }
         } catch (error) {
-            throw new Error("Erro al crear usuario");
+            throw new Error("Error al crear usuario");
         }
     }
 
     async delete(id) {
         try {
-            deletedUser = await this.findOne(id)
+            const deletedUser = await this.findOne(id)
+            console.log(deletedUser);
 
             if (deletedUser.role !== "ADMIN") {
                 return await User.findByIdAndDelete(id)
+            } else {
+                throw new Error("No se puede eliminar al ADMIN")
             }
         } catch (error) {
             throw new Error("No fue posible eliminar al usuario");
@@ -70,7 +71,7 @@ class UserService {
 
     async login(data) {
         try {
-            const existUser = this.findByNameOrEmail(data.user)
+            const existUser = await this.findByNameOrEmail(data.user)
 
             const validPassword = await verifyPassword(data.password, existUser.password)
 

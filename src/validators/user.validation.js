@@ -1,7 +1,7 @@
 import { check } from "express-validator";
 import { validateSchema } from "../helpers/expressValidator.js";
 
-const allowedFields = ['name', 'role', 'password', 'email']
+const allowedFields = ['name', 'role', 'password', 'email', "user"]
 
 //! CREACION DE CLIENTE
 
@@ -10,9 +10,15 @@ export const validateCliente = [
         .exists().withMessage("Debe escoger un nombre de usuario")
         .isAlphanumeric().withMessage("El nombre solo debe contener caracteres alfanumericos"),
 
-    check("name")
-        .exists().withMessage("Debe escoger un nombre de usuario")
-        .isAlphanumeric().withMessage("El nombre solo debe contener caracteres alfanumericos"),
+    check("role")
+        .optional()
+        .exists().withMessage("Debe escoger un rol")
+        .custom((value) => {
+            if (value !== 'Seller') {
+                throw new Error('El campo role debe ser "Seller"');
+            }
+            return true;
+        }).withMessage("El rol no es valido"),
 
     check("email")
         .exists().withMessage("Debe escoger un email")
@@ -20,7 +26,7 @@ export const validateCliente = [
 
     check("password")
         .exists().withMessage("Debe escoger una contraseña")
-        .isStrongPassword(),
+        .isStrongPassword().withMessage("La contraseña debe contener al menos una mayuscula, minuscula, numero, caracter especial y al menos 8 caracteres"),
 
     validateSchema(allowedFields)
 ]
@@ -48,7 +54,20 @@ export const validateSeller = [
 
     check("password")
         .exists().withMessage("Debe escoger una contraseña")
-        .isStrongPassword(),
+        .isStrongPassword().withMessage("La contraseña debe contener al menos una mayuscula, minuscula, numero, caracter especial y al menos 8 caracteres"),
+
+    validateSchema(allowedFields)
+]
+
+//! LOGIN
+
+export const validateLogin = [
+    check("user")
+        .exists().withMessage("Debe escoger un nombre de usuario")
+        .isAlphanumeric().withMessage("El nombre solo debe contener caracteres alfanumericos"),
+
+    check("password")
+        .exists().withMessage("Debe escoger una contraseña"),
 
     validateSchema(allowedFields)
 ]

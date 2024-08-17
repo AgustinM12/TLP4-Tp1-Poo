@@ -81,9 +81,9 @@ export const createSeller = async (req, res) => {
             message: 'Vendedor registrado'
         })
     } catch (error) {
-        return res.status(err.statusCode || 500).json({
-            message: err.message,
-            status: err.status
+        return res.status(error.statusCode || 500).json({
+            message: error.message,
+            status: error.status
         })
     }
 }
@@ -95,23 +95,24 @@ export const deleteUser = async (req, res) => {
             message: 'Usuario Eliminado'
         })
     } catch (error) {
-        return res.status(err.statusCode || 500).json({
-            message: err.message,
-            status: err.status
+        return res.status(error.statusCode || 500).json({
+            message: error.message,
+            status: error.status
         })
     }
 }
 
 export const login = async (req, res) => {
     try {
-        await UserService.login(req.body)
+       const token = await UserService.login(req.body)
+       
         return res.status(201).json({
-            message: 'Login correcto'
+            message: 'Login correcto', token
         })
     } catch (error) {
-        return res.status(err.statusCode || 500).json({
-            message: err.message,
-            status: err.status
+        return res.status(error.statusCode || 500).json({
+            message: error.message,
+            status: error.status
         })
     }
 }
