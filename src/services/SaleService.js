@@ -1,6 +1,7 @@
 import { Sale } from "../models/Sale.js";
 import UserService from "./UserService.js";
 import ProductService from "./ProductService.js"
+import dayjs from "dayjs";
 
 class SaleService {
     constructor() { }
@@ -64,6 +65,10 @@ class SaleService {
                 //! VerificaR que haya suficiente stock
                 const product = await ProductService.findOne(cart.products[i]);
 
+                if (!product) {
+                    throw new Error(`El ID n°${i + 1} es invalido`);
+                }
+
                 if (product.stock < cart.amount[i]) {
                     throw new Error(`Stock insuficiente para el producto ${product.name}`);
                 }
@@ -83,8 +88,10 @@ class SaleService {
                 totalPrice -= cart.discount
             }
 
+            const date = dayjs().format('DD/MM/YYYY');
+
             return await Sale.create({
-                ...cart, price: prices, totalPrice
+                ...cart, price: prices, totalPrice, date
             })
 
         } catch (error) {

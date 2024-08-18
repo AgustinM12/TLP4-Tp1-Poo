@@ -56,8 +56,10 @@ GET http://localhost:{PORT}/api/products
 
 
 Buscar productos por ID 
-GET http://localhost:{PORT}/api/products/{idAdmin o idSeller}
+GET ttp://localhost:{PORT}/api/product/{id del producto}
 
+Buscar productos por nombre
+GET http://localhost:{PORT}/api/product
 
 POST:
 Crear producto 

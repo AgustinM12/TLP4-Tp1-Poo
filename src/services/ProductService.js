@@ -11,6 +11,14 @@ class ProductService {
         }
     }
 
+    async findByName(name) {
+        try {
+            return await Product.findOne(name)
+        } catch (error) {
+            throw new Error("No existe ese producto");
+        }
+    }
+
     async findOne(id) {
         try {
             return await Product.findById(id)
@@ -21,14 +29,16 @@ class ProductService {
 
     async create(product) {
         try {
-            const prod = await Product.create(product)
+            const existProduct = await this.findByName({ name: product.name })
 
-            console.log(prod);
+            if (existProduct) {
+                throw new Error("Ya existe un producto con ese nombre");
+            }
+
+            return await Product.create(product)
 
         } catch (error) {
-            console.log(error);
-
-            throw new Error("Error al registrar producto");
+            throw new Error(error.message || "Error al registrar producto");
         }
     }
 

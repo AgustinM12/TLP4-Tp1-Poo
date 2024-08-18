@@ -84,15 +84,21 @@ class UserService {
 
     async login(data) {
         try {
+            console.log(data);
+
             const existUser = await this.findByNameOrEmail({ user: data.user })
 
+            console.log(existUser);
+
             const validPassword = await verifyPassword(data.password, existUser.password)
+
+            console.log(validPassword);
 
             if (existUser && validPassword) {
                 return generateToken(existUser)
             }
         } catch (error) {
-            throw new Error("Error al iniciar sesion");
+            throw new Error(error.message || "Error al iniciar sesion");
         }
     }
 

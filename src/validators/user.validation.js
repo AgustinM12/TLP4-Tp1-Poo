@@ -58,7 +58,7 @@ export const validateLogin = [
     check("password")
         .exists().withMessage("Debe escoger una contraseña"),
 
-    validateSchema(allowedFields)
+    validateSchema(["user", "password"])
 ]
 
 export const validateNameOrEmail = [

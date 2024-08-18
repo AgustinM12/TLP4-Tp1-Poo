@@ -40,6 +40,26 @@ export const getProduct = async (req, res) => {
     }
 }
 
+export const getProductByName = async (req, res) => {
+    try {
+        const product = await ProductService.findByName(req.body);
+        if (!product) {
+            throw ({
+                statusCode: 404,
+                status: "Not Found",
+                message: "No se encontro el producto",
+            });
+        }
+        return res.json(product)
+
+    } catch (error) {
+        return res.status(error.statusCode || 500).json({
+            message: error.message,
+            status: error.status,
+        })
+    }
+}
+
 export const createProduct = async (req, res) => {
     try {
         await ProductService.create(req.body)

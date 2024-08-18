@@ -71,7 +71,7 @@ export const getSalesByUser = async (req, res) => {
             throw ({
                 statusCode: 404,
                 status: "Not Found",
-                message: "No se encontraron ventas/compras para ese usuario",
+                message: "No se encontraron ventas de ese vendedor",
             });
         }
         return res.json(sales)

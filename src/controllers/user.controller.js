@@ -78,7 +78,7 @@ export const createSeller = async (req, res) => {
     try {
         await UserService.createSeller(req.body)
         return res.status(201).json({
-            message: 'Vendedor registrado'
+            message: 'Usuario registrado'
         })
     } catch (error) {
         return res.status(error.statusCode || 500).json({
@@ -104,8 +104,10 @@ export const deleteUser = async (req, res) => {
 
 export const login = async (req, res) => {
     try {
-       const token = await UserService.login(req.body)
-       
+        const token = await UserService.login(req.body)
+
+        console.log(token);
+
         return res.status(201).json({
             message: 'Login correcto', token
         })

@@ -50,3 +50,12 @@ export const validateUpdateProduct = [
 
     validateSchema(allowedFields)
 ]
+
+// ! BUSCAR POR NOMBRE
+export const validateProductName = [
+    check("name")
+        .exists().withMessage("Debe colocar un nombre al producto")
+        .isAlphanumeric().withMessage("El nombre del producto solo debe contener caracteres alfanumericos"),
+
+    validateSchema(["name"])
+]
