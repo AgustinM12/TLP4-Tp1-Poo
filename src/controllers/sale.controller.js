@@ -1,4 +1,4 @@
-import SaleService from "../services/SaleService";
+import SaleService from "../services/SaleService.js";
 
 export const getSales = async (req, res) => {
     try {
@@ -29,7 +29,7 @@ export const getSaleById = async (req, res) => {
             throw ({
                 statusCode: 404,
                 status: "Not Found",
-                message: "No se encontro la venta",
+                message: "No se encontraron ventas para ese vendedor/admin",
             });
         }
         return res.json(sale)
@@ -46,11 +46,11 @@ export const getSalesByDate = async (req, res) => {
     try {
 
         const sales = await SaleService.findByDate(req.body)
-        if (!sales) {
+        if (!sales || sales.length === 0) {
             throw ({
                 statusCode: 404,
                 status: "Not Found",
-                message: "No se encontraron ventas",
+                message: "No se encontraron ventas en esa fecha",
             });
         }
         return res.json(sales)
@@ -67,7 +67,7 @@ export const getSalesByUser = async (req, res) => {
     try {
 
         const sales = await SaleService.findByUser(req.body)
-        if (!sales) {
+        if (!sales || sales.length === 0) {
             throw ({
                 statusCode: 404,
                 status: "Not Found",
@@ -87,7 +87,7 @@ export const getSalesByUser = async (req, res) => {
 export const createSale = async (req, res) => {
     try {
 
-        await SaleService.findAll(req.body)
+        await SaleService.create(req.body)
 
         return res.status(201).json({
             message: 'Venta registrado'

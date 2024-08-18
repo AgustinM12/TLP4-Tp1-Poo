@@ -8,10 +8,11 @@ const SaleSchema = new Schema({
         ref: 'products',
         required: true
     }],
+    amount: { type: Array, required: true },
     totalPrice: { type: Number, required: true },
     price: { type: Number, required: true },
-    taxes: { type: Number, required: true },
-    discount: { type: Number, required: true },
+    taxes: { type: Number, required: false },
+    discount: { type: Number, required: false },
     idClient: {
         type: Schema.Types.ObjectId,
         ref: 'users',

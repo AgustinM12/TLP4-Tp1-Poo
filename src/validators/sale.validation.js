@@ -3,7 +3,7 @@ import { validateSchema } from "../helpers/expressValidator.js";
 import { param } from "express-validator";
 import mongoose from 'mongoose';
 
-const allowedFields = ['date', 'products', 'taxes', 'discount', 'idSeller', 'idClient']
+const allowedFields = ['date', 'products', 'amount', 'taxes', 'discount', 'idSeller', 'idClient']
 
 export const validateCreateSale = [
     check("date")
@@ -18,7 +18,25 @@ export const validateCreateSale = [
 
     check("products")
         .exists().withMessage("debe elegir los productos")
-        .custom(value => mongoose.Types.ObjectId.isValid(value)).withMessage('los IDs de producto son invalidos'),
+        .isAlphanumeric().withMessage("Debe colocar productos"),
+
+    check("amount")
+        .exists().withMessage("Debe colocar las cantidades de cada producto")
+        .isArray().withMessage("El campo debe ser un array")
+        .custom((value) => {
+            // Verifica que el array no esté vacío
+            if (value.length === 0) {
+                throw new Error('El array no puede estar vacío');
+            }
+
+            // Verifica que cada elemento del array sea un número
+            const allNumbers = value.every(item => typeof item === 'number' && !isNaN(item));
+            if (!allNumbers) {
+                throw new Error('Todos los elementos del array deben ser números');
+            }
+            
+            return true;
+        }).withMessage("Todos los elementos del array deben ser números"),
 
     check("taxes")
         .optional()
@@ -42,9 +60,15 @@ export const validateCreateSale = [
 ]
 
 export const validateSaleId = [
-    param("id")
+    check("idSeller")
+        .optional()
         .exists().withMessage("el id de la venta es obligatorio")
-        .custom(value => mongoose.Types.ObjectId.isValid(value)).withMessage('El ID es invalido'),
+        .isAlphanumeric().withMessage("El id es invalido"),
+
+    check("idClient")
+        .optional()
+        .exists().withMessage("el id de la venta es obligatorio")
+        .isAlphanumeric().withMessage("El id es invalido"),
 
     validateSchema(allowedFields)
 

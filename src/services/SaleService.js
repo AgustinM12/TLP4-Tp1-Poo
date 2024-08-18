@@ -33,9 +33,11 @@ class SaleService {
         }
     }
 
-    async findByUser(idUser) {
+    async findByUser(id) {
         try {
-            return await Sale.find(idUser)
+            console.log(id);
+
+            return await Sale.find(id)
         } catch (error) {
             throw new Error("No hay registro de ventas de ese vendedor");
         }
@@ -44,29 +46,35 @@ class SaleService {
     async create(cart) {
         try {
 
+            console.log(cart);
+
+
             const client = await UserService.findOne(cart.idClient)
-            if (!client || !client.role !== "CLIENT") {
+            if (!client || client.role !== "CLIENT") {
                 throw new Error("El ID no corresponde al de un cliente");
             }
 
             const seller = await UserService.findOne(cart.idSeller)
-            if (!seller || !seller.role !== "SELLER") {
-                throw new Error("El ID no corresponde al de un vendedor");
+
+            if (!seller || (seller.role !== "SELLER" && seller.role !== "ADMIN")) {
+                throw new Error("El ID no corresponde al de un vendedor o ADMIN");
             }
 
             const productPrices = await ProductService.getPricesByIds(cart.products)
 
-            const prices = productPrices.reduce((accumulator, current) => {
-                return accumulator + current.price;
-            }, 0);
+            let totalPrice = 0;
 
-            let totalPrice = prices
+            for (let i = 0; i < productPrices.length; i++) {
+                totalPrice += (productPrices[i].price * cart.amount[i]);
+            }
+
+            const prices = totalPrice
 
             if (cart.taxes) {
-                totalPrice + cart.taxes
+                totalPrice += cart.taxes
             }
             if (cart.discount) {
-                totalPrice - cart.discount
+                totalPrice -= cart.discount
             }
 
             return await Sale.create({

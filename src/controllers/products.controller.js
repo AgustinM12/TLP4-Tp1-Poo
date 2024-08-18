@@ -47,9 +47,9 @@ export const createProduct = async (req, res) => {
             message: 'Producto creado'
         })
     } catch (error) {
-        return res.status(err.statusCode || 500).json({
-            message: err.message,
-            status: err.status
+        return res.status(error.statusCode || 500).json({
+            message: error.message,
+            status: error.status
         })
     }
 }
@@ -61,9 +61,9 @@ export const updateProduct = async (req, res) => {
             message: 'Producto actualizado'
         })
     } catch (error) {
-        return res.status(err.statusCode || 500).json({
-            message: err.message,
-            status: err.status
+        return res.status(error.statusCode || 500).json({
+            message: error.message,
+            status: error.status
         })
     }
 }
@@ -75,9 +75,9 @@ export const deleteProduct = async (req, res) => {
             message: 'Producto Eliminado'
         })
     } catch (error) {
-        return res.status(err.statusCode || 500).json({
-            message: err.message,
-            status: err.status
+        return res.status(error.statusCode || 500).json({
+            message: error.message,
+            status: error.status
         })
     }
 }

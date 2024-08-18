@@ -21,8 +21,13 @@ class ProductService {
 
     async create(product) {
         try {
-            return await Product.create(product)
+            const prod = await Product.create(product)
+
+            console.log(prod);
+
         } catch (error) {
+            console.log(error);
+
             throw new Error("Error al registrar producto");
         }
     }
@@ -45,12 +50,16 @@ class ProductService {
 
     async getPricesByIds(ids) {
         try {
-            // Asegúrate de que `ids` es un array de ObjectId o cadenas
-            const products = await Product.find({ _id: { $in: ids } }).select('price', '_id');
+            console.log(ids);
 
-            // ! Extrae los precios de los productos encontrados
+            // Asegúrate de que `ids` es un array de ObjectId o cadenas
+            const products = await Product.find({ _id: { $in: ids } }).select('price _id');
+
+            console.log(products);
+
+            // Extrae los precios de los productos encontrados
             const prices = products.map(product => ({
-                id: product._id,
+                id: product._id.toString(), // Asegúrate de que el id se convierta a cadena
                 price: product.price
             }));
 
