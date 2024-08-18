@@ -46,8 +46,9 @@ class SaleService {
     async create(cart) {
         try {
 
-            console.log(cart);
-
+            if (cart.amount.length !== cart.products.length) {
+                throw new Error("Las cantidades no coinciden con los productos");
+            }
 
             const client = await UserService.findOne(cart.idClient)
             if (!client || client.role !== "CLIENT") {
@@ -64,8 +65,19 @@ class SaleService {
 
             let totalPrice = 0;
 
+            // ! CALCULAR COSTOS Y ACTUALIZAR STOCK
             for (let i = 0; i < productPrices.length; i++) {
-                totalPrice += (productPrices[i].price * cart.amount[i]);
+                //! VerificaR que haya suficiente stock
+                const product = await ProductService.findOne(cart.products[i]);
+
+                if (product.stock < cart.amount[i]) {
+                    throw new Error(`Stock insuficiente para el producto ${product.name}`);
+                }
+
+                //! Actualiza el stock del producto
+                await ProductService.update(cart.products[i], { stock: product.stock - cart.amount[i] });
+
+                totalPrice += productPrices[i].price * (cart.amount[i] === 0 ? 1 : cart.amount[i]);
             }
 
             const prices = totalPrice

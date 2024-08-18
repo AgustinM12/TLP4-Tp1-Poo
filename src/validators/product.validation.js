@@ -3,7 +3,7 @@ import { validateSchema } from "../helpers/expressValidator.js";
 
 // !CREACION DEL PRODUCTO
 
-const allowedFields = ['name', 'desc', 'price', 'category', 'stock']
+const allowedFields = ['name', 'desc', 'price', 'stock']
 
 export const validateCreateProduct = [
     check("name")
@@ -17,10 +17,6 @@ export const validateCreateProduct = [
     check("price")
         .exists().withMessage("Debe colocarle un precio al producto")
         .isNumeric().withMessage("El precio solo puede ser un valor númerico"),
-
-    check("category")
-        .exists().withMessage("Debe colocarle una categoria al producto")
-        .isAlphanumeric().withMessage("La categoria solo debe contener caracteres alfanumericos"),
 
     check("stock")
         .exists().withMessage("Debe colocarle una cantidad de stock al producto")
