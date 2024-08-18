@@ -42,7 +42,7 @@ export const getUserByNameOrEmail = async (req, res) => {
 
 export const getUsersByRole = async (req, res) => {
     try {
-        const users = await UserService.findByRole(req.body);
+        const users = await UserService.findByRole(req.params.role);
         if (!users) {
             throw ({
                 statusCode: 404,

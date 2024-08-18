@@ -5,13 +5,9 @@ import ProductService from "./ProductService.js"
 class SaleService {
     constructor() { }
 
-    async findAll(id) {
+    async findAll() {
         try {
-            if (id) {
-                return await Sale.find()
-            } else {
-                throw new Error("Debe ser un vendedor a admin para acceder a todas la ventas");
-            }
+            return await Sale.find()
         } catch (error) {
             throw new Error(error.message || "No hay ventas registradas");
         }
@@ -35,9 +31,7 @@ class SaleService {
 
     async findByUser(id) {
         try {
-            console.log(id);
-
-            return await Sale.find(id)
+            return await Sale.find({ idSeller: id })
         } catch (error) {
             throw new Error("No hay registro de ventas de ese vendedor");
         }

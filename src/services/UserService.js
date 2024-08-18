@@ -27,9 +27,13 @@ class UserService {
 
     async findByRole(role) {
         try {
-            return await User.find(role)
+            if (role) {
+                return await User.find({ role: role })
+            } else {
+                throw new Error("Elija el rol que quiere buscar");
+            }
         } catch (error) {
-            throw new Error("No se encontraron usuarios");
+            throw new Error(error.message || "No se encontraron usuarios");
         }
     }
 

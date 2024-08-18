@@ -1,12 +1,12 @@
 import { Router } from "express";
 import { createProduct, deleteProduct, getProducts, updateProduct, getProduct } from "../controllers/products.controller.js"
 import { validateCreateProduct, validateUpdateProduct } from "../validators/product.validation.js"
-import { validateParamsId } from "../validators/sale.validation.js"
+import { validateParamsId, validateHeader } from "../validators/sale.validation.js"
 import { verifyToken, verifyAdminOrSeller } from "../helpers/jwt.js"
 
 const router = Router();
 
-router.get("/products/:id", validateParamsId, verifyToken, verifyAdminOrSeller, getProducts)
+router.get("/products", validateHeader, verifyToken, verifyAdminOrSeller, getProducts)
 router.get("/product/:id", validateParamsId, verifyToken, verifyAdminOrSeller, getProduct)
 
 router.post("/product", validateCreateProduct, verifyToken, verifyAdminOrSeller, createProduct)

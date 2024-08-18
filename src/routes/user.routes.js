@@ -11,7 +11,7 @@ import { verifyToken, verifyAdmin, verifyAdminOrSeller } from "../helpers/jwt.js
 
 const router = Router();
 
-router.get("/user/:role", validateParamsRole, verifyToken, verifyAdmin, getUsersByRole)
+router.get("/userRole/:role", validateParamsRole, verifyToken, verifyAdmin, getUsersByRole)
 router.get("/user/:id", validateParamsId, verifyToken, verifyAdmin, getUserById)
 router.get("/userNameEmail", validateNameOrEmail, verifyToken, verifyAdminOrSeller, getUserByNameOrEmail)
 

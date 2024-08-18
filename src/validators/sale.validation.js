@@ -1,6 +1,5 @@
-import { check } from "express-validator";
+import { check, header, param } from "express-validator";
 import { validateSchema } from "../helpers/expressValidator.js";
-import { param } from "express-validator";
 
 const allowedFields = ['date', 'products', 'amount', 'taxes', 'discount', 'idSeller', 'idClient']
 
@@ -111,3 +110,14 @@ export const validateParamsRole = [
     validateSchema(["role"])
 
 ]
+
+
+export const validateHeader = [
+
+    header('Authorization')
+        .exists().withMessage('El encabezado Authorization es requerido'),
+
+    validateSchema(allowedFields)
+
+]
+

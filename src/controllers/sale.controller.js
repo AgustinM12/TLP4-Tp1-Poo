@@ -3,7 +3,7 @@ import SaleService from "../services/SaleService.js";
 export const getSales = async (req, res) => {
     try {
 
-        const sales = await SaleService.findAll(req.params.id)
+        const sales = await SaleService.findAll()
         if (!sales) {
             throw ({
                 statusCode: 404,
@@ -66,7 +66,7 @@ export const getSalesByDate = async (req, res) => {
 export const getSalesByUser = async (req, res) => {
     try {
 
-        const sales = await SaleService.findByUser(req.body)
+        const sales = await SaleService.findByUser(req.params.id)
         if (!sales || sales.length === 0) {
             throw ({
                 statusCode: 404,
