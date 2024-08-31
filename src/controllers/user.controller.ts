@@ -1,6 +1,8 @@
-import UserService from "../services/UserService.js"
+import { Request, Response } from "express";
+import UserService from "../services/UserService"
 
-export const getUserById = async (req, res) => {
+export const getUserById = async (req: Request, res: Response) => {
+
     try {
         const user = await UserService.findOne(req.params.id);
         if (!user) {
@@ -12,7 +14,7 @@ export const getUserById = async (req, res) => {
         }
         return res.json(user)
 
-    } catch (error) {
+    } catch (error: any) {
         return res.status(error.statusCode || 500).json({
             message: error.message,
             status: error.status,
@@ -20,7 +22,7 @@ export const getUserById = async (req, res) => {
     }
 }
 
-export const getUserByNameOrEmail = async (req, res) => {
+export const getUserByNameOrEmail = async (req: Request, res: Response) => {
     try {
         const user = await UserService.findByNameOrEmail(req.body);
         if (!user) {
@@ -60,17 +62,19 @@ export const getUsersByRole = async (req, res) => {
     }
 }
 
-export const createClient = async (req, res) => {
+export const createClient = async (req: Request, res: Response) => {
     try {
         await UserService.createClient(req.body)
         return res.status(201).json({
             message: 'Cliente registrado'
         })
     } catch (error) {
-        return res.status(error.statusCode || 500).json({
+        error instanceof Error ? (res.status(500).json({
             message: error.message,
             status: error.status
-        })
+        })) : (res.status(500).json({ message: "Error desconocido", status: 500 }))
+
+
     }
 }
 

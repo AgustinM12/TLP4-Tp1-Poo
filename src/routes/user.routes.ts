@@ -2,12 +2,12 @@ import { Router } from "express";
 import {
     getUserByNameOrEmail, login, createSeller,
     createClient, deleteUser, getUserById, getUsersByRole
-} from "../controllers/user.controller.js"
+} from "../controllers/user.controller"
 
-import { validateCliente, validateSeller, validateLogin, validateNameOrEmail } from "../validators/user.validation.js"
-import { validateParamsId, validateParamsRole } from "../validators/sale.validation.js"
+import { validateCliente, validateSeller, validateLogin, validateNameOrEmail } from "../validators/user.validation"
+import { validateParamsId, validateParamsRole } from "../validators/sale.validation"
 
-import { verifyToken, verifyAdmin, verifyAdminOrSeller } from "../helpers/jwt.js"
+import { verifyToken, verifyAdmin, verifyAdminOrSeller } from "../helpers/jwt"
 
 const router = Router();
 

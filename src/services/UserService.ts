@@ -2,6 +2,13 @@ import { User } from "../models/User.js";
 import { generateToken, verifyToken } from "../helpers/jwt.js"
 import { verifyPassword } from "../helpers/validatePassword.js"
 
+interface User {
+    name: string,
+    email: string,
+    password: string,
+    role: string
+}
+
 class UserService {
 
     async findOne(id) {
@@ -37,7 +44,7 @@ class UserService {
         }
     }
 
-    async createClient(user) {
+    async createClient(user: User) {
         try {
             const existClient = await this.findByNameOrEmail({ user: user.name })
 
