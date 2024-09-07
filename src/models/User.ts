@@ -1,8 +1,21 @@
-import { model, Schema } from "mongoose";
+import { model, Schema, Document, Model } from "mongoose";
 import bcrypt from "bcrypt";
 
+export interface IUser extends Document {
+    name: string;
+    email: string;
+    password: string;
+    role: string;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export interface IUserModel extends Model<IUser> {
+    createDefaultAdmin(): Promise<void>;
+}
+
 // Definir el esquema de usuario
-const UserSchema = new Schema({
+const UserSchema = new Schema<IUser>({
     name: { type: String, required: true },
     email: { type: String, required: true },
     password: { type: String, required: true },
@@ -12,7 +25,7 @@ const UserSchema = new Schema({
 });
 
 // Middleware para encriptar la contraseña antes de guardar
-UserSchema.pre("save", async function (next) {
+UserSchema.pre<IUser>("save", async function (next) {
     const user = this
 
     // Solo encriptar la contraseña si ha sido modificada o es nueva
@@ -30,15 +43,15 @@ UserSchema.pre("save", async function (next) {
         user.password = hash;
         next();
     } catch (err) {
-        next(err);
+        next(err as Error);
     }
 });
 
 // Verificar si ya existe un usuario ADMIN
-UserSchema.statics.createDefaultAdmin = async function () {
+UserSchema.statics.createDefaultAdmin = async function (): Promise<void> {
     const User = this;
 
-    const adminExists = await User.findOne({ name: "ADMIN" });
+    const adminExists: IUser = await User.findOne({ name: "ADMIN" });
 
     if (!adminExists) {
         // Crear un nuevo usuario "ADMIN" con la contraseña "0000"
@@ -55,7 +68,7 @@ UserSchema.statics.createDefaultAdmin = async function () {
 };
 
 // Crear el modelo
-export const User = model("users", UserSchema);
+export const User = model<IUser, IUserModel>("users", UserSchema);
 
 // Crear el usuario ADMIN por defecto
 

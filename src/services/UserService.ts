@@ -1,25 +1,20 @@
-import { User } from "../models/User.js";
-import { generateToken, verifyToken } from "../helpers/jwt.js"
-import { verifyPassword } from "../helpers/validatePassword.js"
-
-interface User {
-    name: string,
-    email: string,
-    password: string,
-    role: string
-}
+import { User, IUserModel, IUser } from "../models/User";
+import { generateToken } from "../helpers/jwt"
+import { verifyPassword } from "../helpers/validatePassword"
+import { userDB } from "../types/userFromDb"
+import { CustomError } from "../models/CustomErrors"
 
 class UserService {
 
-    async findOne(id) {
+    async findOne(id: string): Promise<userDB> {
         try {
             return await User.findById(id)
         } catch (error) {
-            throw new Error("No se encontro usuario");
+            throw new CustomError("No se encontró al usuario", 500);
         }
     }
 
-    async findByNameOrEmail({ user }) {
+    async findByNameOrEmail({ user }: { user: string }): Promise<userDB> {
         try {
             return await User.findOne({
                 $or: [
@@ -28,11 +23,11 @@ class UserService {
                 ]
             });
         } catch (error) {
-            throw new Error("No se encontró el usuario");
+            throw new CustomError("No se encontró al usuario", 500);
         }
     }
 
-    async findByRole(role) {
+    async findByRole(role: string): Promise<IUser[]> {
         try {
             if (role) {
                 return await User.find({ role: role })
@@ -40,72 +35,91 @@ class UserService {
                 throw new Error("Elija el rol que quiere buscar");
             }
         } catch (error) {
-            throw new Error(error.message || "No se encontraron usuarios");
+            throw new CustomError("No se encontró al usuario", 500);
         }
     }
 
-    async createClient(user: User) {
+    async createClient(user: IUser): Promise<string> {
         try {
-            const existClient = await this.findByNameOrEmail({ user: user.name })
+            if (!user) {
+                throw new CustomError("El usuario proporcionado es inválido", 400);
+            }
+
+            const existClient: userDB = await this.findByNameOrEmail({ user: user.name });
 
             if (!existClient) {
                 if (!user.role) {
-                    return await User.create({ ...user, role: "CLIENT" });
+                    await User.create({ ...user, role: "CLIENT" });
+                    return "Cliente creado correctamente";
+                } else {
+                    throw new CustomError("El rol no puedo ser asignado", 400);
                 }
             } else {
-                throw new Error("El nombre de usuario ya esta ocupado");
+                throw new CustomError("El nombre de usuario ya está ocupado", 400);
             }
         } catch (error) {
-            throw new Error(error.message || "Error al crear usuario");
+            if (error instanceof CustomError) {
+                throw error; // Lanza el error personalizado si es del tipo CustomError
+            }
+            // Lanza un error general si no es un CustomError
+            throw new CustomError("No se pudo crear el cliente", 500);
         }
     }
 
-    async createSeller(user) {
+
+    async createSeller(user: IUserModel): Promise<string> {
         try {
             const existSeller = await this.findByNameOrEmail({ user: user.name })
 
             if (!existSeller) {
-                return await User.create(user);
+                await User.create(user);
+                return "Usuario creado correctamente"
             } else {
-                throw new Error("El nombre de usuario ya esta ocupado");
+                throw new CustomError("No se encontró al usuario", 500);
             }
         } catch (error) {
-            throw new Error(error.message || "Error al crear usuario");
+            throw new CustomError("No se encontró al usuario", 500);
         }
     }
 
-    async delete(id) {
+    async delete(id: string): Promise<string> {
         try {
-            const deletedUser = await this.findOne(id)
-            console.log(deletedUser);
+            const deletedUser: userDB = await this.findOne(id)
 
-            if (deletedUser.role !== "ADMIN") {
-                return await User.findByIdAndDelete(id)
+            if (deletedUser) {
+                if (deletedUser.role !== "ADMIN") {
+                    await User.findByIdAndDelete(id)
+                    return "Usuario eliminado correctamente"
+                } else {
+                    throw new Error("No se puede eliminar al ADMIN")
+                }
             } else {
-                throw new Error("No se puede eliminar al ADMIN")
+                return "El usuario no existe"
             }
+
         } catch (error) {
             throw new Error("No fue posible eliminar al usuario");
         }
     }
 
-    async login(data) {
+    async login(data: { user: string, password: string }): Promise<string> {
         try {
-            console.log(data);
 
-            const existUser = await this.findByNameOrEmail({ user: data.user })
+            const existUser: userDB = await this.findByNameOrEmail({ user: data.user })
 
-            console.log(existUser);
+            if (existUser) {
+                const validPassword: boolean = await verifyPassword(data.password, existUser.password)
 
-            const validPassword = await verifyPassword(data.password, existUser.password)
-
-            console.log(validPassword);
-
-            if (existUser && validPassword) {
-                return generateToken(existUser)
+                if (validPassword) {
+                    return generateToken(existUser)
+                } else {
+                    return "La contraseña no es valida"
+                }
+            } else {
+                throw new CustomError("No se encontró al usuario", 500);
             }
         } catch (error) {
-            throw new Error(error.message || "Error al iniciar sesion");
+            throw new CustomError("No se encontró al usuario", 500);
         }
     }
 

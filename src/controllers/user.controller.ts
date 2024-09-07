@@ -1,30 +1,36 @@
 import { Request, Response } from "express";
 import UserService from "../services/UserService"
+import { CustomError } from "../models/CustomErrors";
+import { IUser } from "../models/User"
 
 export const getUserById = async (req: Request, res: Response) => {
 
     try {
-        const user = await UserService.findOne(req.params.id);
+        const user: IUser | null = await UserService.findOne(req.params.id);
         if (!user) {
-            throw ({
-                statusCode: 404,
-                status: "Not Found",
-                message: "No se encontro al usuario",
-            });
+            throw new CustomError("No se encontro al usuario", 404);
         }
         return res.json(user)
 
-    } catch (error: any) {
-        return res.status(error.statusCode || 500).json({
-            message: error.message,
-            status: error.status,
-        })
+    } catch (error) {
+        if (error instanceof CustomError) {
+            return res.status(error.statusCode).json({
+                message: error.message,
+                status: error.status,
+            });
+        }
+        // Manejo de otros errores (por ejemplo, errores internos del servidor)
+        return res.status(500).json({
+            message: "Ocurrió un error inesperado",
+            status: "error",
+        });
     }
 }
 
+
 export const getUserByNameOrEmail = async (req: Request, res: Response) => {
     try {
-        const user = await UserService.findByNameOrEmail(req.body);
+        const user: IUser | null = await UserService.findByNameOrEmail(req.body);
         if (!user) {
             throw ({
                 statusCode: 404,
@@ -35,80 +41,114 @@ export const getUserByNameOrEmail = async (req: Request, res: Response) => {
         return res.json(user)
 
     } catch (error) {
-        return res.status(error.statusCode || 500).json({
-            message: error.message,
-            status: error.status,
-        })
+        if (error instanceof CustomError) {
+            return res.status(error.statusCode).json({
+                message: error.message,
+                status: error.status,
+            });
+        }
+        return res.status(500).json({
+            message: "Ocurrió un error inesperado",
+            status: "error",
+        });
     }
 }
 
-export const getUsersByRole = async (req, res) => {
+export const getUsersByRole = async (req: Request, res: Response) => {
     try {
         const users = await UserService.findByRole(req.params.role);
+
         if (!users) {
             throw ({
                 statusCode: 404,
                 status: "Not Found",
-                message: "No se encontraron el usuarios",
+                message: "No se encontraron usuarios",
             });
         }
         return res.json(users)
 
     } catch (error) {
-        return res.status(error.statusCode || 500).json({
-            message: error.message,
-            status: error.status,
-        })
+        if (error instanceof CustomError) {
+            return res.status(error.statusCode).json({
+                message: error.message,
+                status: error.status,
+            });
+        }
+        return res.status(500).json({
+            message: "Ocurrió un error inesperado",
+            status: "error",
+        });
     }
 }
 
 export const createClient = async (req: Request, res: Response) => {
     try {
         await UserService.createClient(req.body)
+
         return res.status(201).json({
             message: 'Cliente registrado'
         })
+
     } catch (error) {
-        error instanceof Error ? (res.status(500).json({
-            message: error.message,
-            status: error.status
-        })) : (res.status(500).json({ message: "Error desconocido", status: 500 }))
-
-
+        if (error instanceof CustomError) {
+            return res.status(error.statusCode).json({
+                message: error.message,
+                status: error.status,
+            });
+        }
+        return res.status(500).json({
+            message: "Ocurrió un error inesperado",
+            status: "error",
+        });
     }
+
 }
 
-export const createSeller = async (req, res) => {
+export const createSeller = async (req: Request, res: Response) => {
     try {
         await UserService.createSeller(req.body)
+
         return res.status(201).json({
             message: 'Usuario registrado'
         })
     } catch (error) {
-        return res.status(error.statusCode || 500).json({
-            message: error.message,
-            status: error.status
-        })
+        if (error instanceof CustomError) {
+            return res.status(error.statusCode).json({
+                message: error.message,
+                status: error.status,
+            });
+        }
+        return res.status(500).json({
+            message: "Ocurrió un error inesperado",
+            status: "error",
+        });
     }
 }
 
-export const deleteUser = async (req, res) => {
+export const deleteUser = async (req: Request, res: Response) => {
     try {
         await UserService.delete(req.params.id)
+
         return res.status(201).json({
             message: 'Usuario Eliminado'
         })
     } catch (error) {
-        return res.status(error.statusCode || 500).json({
-            message: error.message,
-            status: error.status
-        })
+        if (error instanceof CustomError) {
+            return res.status(error.statusCode).json({
+                message: error.message,
+                status: error.status,
+            });
+        }
+        return res.status(500).json({
+            message: "Ocurrió un error inesperado",
+            status: "error",
+        });
     }
 }
 
-export const login = async (req, res) => {
+export const login = async (req: Request, res: Response) => {
     try {
-        const token = await UserService.login(req.body)
+        const token: string = await UserService.login(req.body)
 
         console.log(token);
 
@@ -116,9 +156,15 @@ export const login = async (req, res) => {
             message: 'Login correcto', token
         })
     } catch (error) {
-        return res.status(error.statusCode || 500).json({
-            message: error.message,
-            status: error.status
-        })
+        if (error instanceof CustomError) {
+            return res.status(error.statusCode).json({
+                message: error.message,
+                status: error.status,
+            });
+        }
+        return res.status(500).json({
+            message: "Ocurrió un error inesperado",
+            status: "error",
+        });
     }
 }
