@@ -1,11 +1,12 @@
-import { validationResult } from "express-validator";
+import { ValidationError, validationResult } from "express-validator";
+import { Request, Response, NextFunction } from "express";
 
-export const validateSchema = (allowedFields) => (req, res, next) => {
+export const validateSchema = (allowedFields: string[]) => (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
 
-    // Verificar si hay campos adicionales
-    const receivedFields = Object.keys(req.body);
-    const extraFields = receivedFields.filter(field => !allowedFields.includes(field));
+    const receivedFields: string[] = Object.keys(req.body);
+
+    const extraFields: string[] = receivedFields.filter((field: string) => !allowedFields.includes(field));
 
     if (extraFields.length > 0) {
         return res.status(400).json({
@@ -14,7 +15,7 @@ export const validateSchema = (allowedFields) => (req, res, next) => {
     }
 
     if (!errors.isEmpty()) {
-        const formattedErrors = errors.array().reduce((acc, error) => {
+        const formattedErrors = errors.array().reduce((acc: Record<string, string[]>, error: ValidationError) => {
             const { path, msg } = error;
             if (!acc[path]) {
                 acc[path] = [];

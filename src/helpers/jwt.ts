@@ -1,22 +1,42 @@
 import jwt from "jsonwebtoken"
-const secretKey = process.env.SECRET
+import { secretKey } from "../config/config"
+import { IUser } from "../models/User"
+import { Request, Response, NextFunction } from "express"
 
-export const generateToken = (user) => {
-    const tokenPayload = {
-        id: user._id,
-        username: user.username,
-        email: user.email,
-        role: user.role
-    };
+interface IToken {
+    id: unknown,
+    name: string,
+    email: string,
+    role: string
+}
 
-    // ! Crear el token con duracion de una hora
-    const token = jwt.sign(tokenPayload, secretKey, { expiresIn: '1h' });
+interface AuthenticatedRequest extends Request {
+    user?: any; // Ajusta el tipo según lo que esperas que sea `req.user`
+}
 
-    return token;
+export const generateToken = (user: IUser): string => {
+    try {
+        const tokenPayload: IToken = {
+            id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role
+        };
+
+        if (secretKey !== undefined) {
+            // ! Crear el token con duracion de una hora
+            const token = jwt.sign(tokenPayload, secretKey, { expiresIn: '1h' });
+            return token;
+        } else {
+            throw new Error("Debe proporcionar una clave secreta")
+        }
+    } catch (error) {
+        throw new Error("Debe proporcionar una clave secreta")
+    }
 }
 
 
-export const verifyToken = (req, res, next) => {
+export const verifyToken = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     // ! Obtener el token de los headers de la solicitud
     const token = req.headers['authorization'];
 
@@ -25,18 +45,18 @@ export const verifyToken = (req, res, next) => {
     }
 
     try {
-        //! Verificar el token
-        const decoded = jwt.verify(token, secretKey);
-
-        req.user = decoded;
-
-        next();
+        if (secretKey !== undefined) {
+            //! Verificar el token
+            const decoded = jwt.verify(token, secretKey);
+            req.user = decoded;
+            next();
+        }
     } catch (error) {
         return res.status(401).json({ message: 'Token no válido.' });
     }
 }
 
-export const verifyAdminOrSeller = (req, res, next) => {
+export const verifyAdminOrSeller = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
 
     const { role } = req.user;
 
@@ -48,7 +68,7 @@ export const verifyAdminOrSeller = (req, res, next) => {
     }
 };
 
-export const verifyAdmin = (req, res, next) => {
+export const verifyAdmin = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
 
     const { role } = req.user;
 

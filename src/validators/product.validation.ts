@@ -3,7 +3,7 @@ import { validateSchema } from "../helpers/expressValidator.js";
 
 // !CREACION DEL PRODUCTO
 
-const allowedFields = ['name', 'desc', 'price', 'stock']
+const allowedFields: string[] = ['name', 'desc', 'price', 'stock']
 
 export const validateCreateProduct = [
     check("name")

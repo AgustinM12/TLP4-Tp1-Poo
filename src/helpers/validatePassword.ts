@@ -1,15 +1,19 @@
 import bcrypt from 'bcrypt'
 
-export const verifyPassword = async (Password, PasswordHash) => {
+export const verifyPassword = async (Password: string, PasswordHash: string): Promise<boolean> => {
     try {
 
         const match = await bcrypt.compare(Password, PasswordHash);
         if (match === true) {
             return match;
-        }else{
+        } else {
             throw new Error("Las contraseñas no coinciden");
         }
     } catch (error) {
-        throw new Error(error.message || 'Error al verificar la contraseña');
+        if (error instanceof Error) {
+            throw new Error(error.message);
+        } else {
+            throw new Error('Error desconocido al verificar la contraseña');
+        }
     }
 }

@@ -4,7 +4,7 @@ import dayjs from "dayjs";
 import customParseFormat from 'dayjs/plugin/customParseFormat.js';
 dayjs.extend(customParseFormat);
 
-const allowedFields = ['products', 'amount', 'taxes', 'discount', 'idSeller', 'idClient']
+const allowedFields: string[] = ['products', 'amount', 'taxes', 'discount', 'idSeller', 'idClient']
 
 export const validateCreateSale = [
 
@@ -17,7 +17,7 @@ export const validateCreateSale = [
                 throw new Error('El array no puede estar vacío');
             }
             //! Verifica que cada elemento del array sea un string
-            const allStrings = value.every(item => typeof item === 'string');
+            const allStrings = value.every((item: string) => typeof item === 'string');
             if (!allStrings) {
                 throw new Error('Todos los elementos del array deben ser ids validos');
             }
@@ -34,7 +34,7 @@ export const validateCreateSale = [
             }
 
             //! Verifica que cada elemento del array sea un número
-            const allNumbers = value.every(item => typeof item === 'number' && !isNaN(item));
+            const allNumbers = value.every((item: string) => typeof item === 'number' && !isNaN(item));
             if (!allNumbers) {
                 throw new Error('Todos los elementos del array deben ser números');
             }

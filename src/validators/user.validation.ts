@@ -1,7 +1,7 @@
 import { check } from "express-validator";
 import { validateSchema } from "../helpers/expressValidator.js";
 
-const allowedFields = ['name', 'role', 'password', 'email', "user"]
+const allowedFields: string[] = ['name', 'role', 'password', 'email', "user"]
 
 //! CREACION DE CLIENTE
 

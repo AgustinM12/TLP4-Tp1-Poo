@@ -1,6 +1,8 @@
 import ProductService from "../services/ProductService.js"
+import { Request, Response } from "express";
 
-export const getProducts = async (req, res) => {
+
+export const getProducts = async (_req: Request, res: Response) => {
     try {
         const products = await ProductService.findAll();
         if (products.length === 0 || !products) {
@@ -20,7 +22,7 @@ export const getProducts = async (req, res) => {
     }
 }
 
-export const getProduct = async (req, res) => {
+export const getProduct = async (req: Request, res: Response) => {
     try {
         const product = await ProductService.findOne(req.params.id);
         if (!product) {
@@ -40,7 +42,7 @@ export const getProduct = async (req, res) => {
     }
 }
 
-export const getProductByName = async (req, res) => {
+export const getProductByName = async (req: Request, res: Response) => {
     try {
         const product = await ProductService.findByName(req.body);
         if (!product) {
@@ -60,7 +62,7 @@ export const getProductByName = async (req, res) => {
     }
 }
 
-export const createProduct = async (req, res) => {
+export const createProduct = async (req: Request, res: Response) => {
     try {
         await ProductService.create(req.body)
         return res.status(201).json({
@@ -74,7 +76,7 @@ export const createProduct = async (req, res) => {
     }
 }
 
-export const updateProduct = async (req, res) => {
+export const updateProduct = async (req: Request, res: Response): Promise<void> => {
     try {
         await ProductService.update(req.params.id, req.body)
         return res.status(201).json({
@@ -88,7 +90,7 @@ export const updateProduct = async (req, res) => {
     }
 }
 
-export const deleteProduct = async (req, res) => {
+export const deleteProduct = async (req: Request, res: Response): Promise<void> => {
     try {
         await ProductService.delete(req.params.id)
         return res.status(201).json({
