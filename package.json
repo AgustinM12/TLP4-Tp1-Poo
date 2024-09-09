@@ -2,7 +2,6 @@
   "name": "poo-practica",
   "version": "1.0.0",
   "main": "index.js",
-  "type": "module",
   "scripts": {
     "dev": "nodemon",
     "build": "rimraf ./dist && tsc",

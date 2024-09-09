@@ -1,9 +1,13 @@
 import SaleService from "../services/SaleService.js";
+import { CustomError } from "../models/CustomErrors.js";
+import { Request, Response } from "express";
+import { saleDB } from "../types/dataFromDb.js";
 
-export const getSales = async (req, res) => {
+export const getSales = async (_req: Request, res: Response): Promise<Response> => {
     try {
 
-        const sales = await SaleService.findAll()
+        const sales: saleDB[] = await SaleService.findAll()
+
         if (!sales) {
             throw ({
                 statusCode: 404,
@@ -14,17 +18,23 @@ export const getSales = async (req, res) => {
         return res.json(sales)
 
     } catch (error) {
-        return res.status(error.statusCode || 500).json({
-            message: error.message,
-            status: error.status,
-        })
+        if (error instanceof CustomError) {
+            return res.status(error.statusCode).json({
+                message: error.message,
+                status: error.status,
+            });
+        }
+        return res.status(500).json({
+            message: "Ocurrió un error inesperado",
+            status: "error",
+        });
     }
 }
 
-export const getSaleById = async (req, res) => {
+export const getSaleById = async (req: Request, res: Response): Promise<Response> => {
     try {
 
-        const sale = await SaleService.findOne(req.params.id)
+        const sale: saleDB = await SaleService.findOne(req.params.id)
         if (!sale) {
             throw ({
                 statusCode: 404,
@@ -35,17 +45,24 @@ export const getSaleById = async (req, res) => {
         return res.json(sale)
 
     } catch (error) {
-        return res.status(error.statusCode || 500).json({
-            message: error.message,
-            status: error.status,
-        })
+        if (error instanceof CustomError) {
+            return res.status(error.statusCode).json({
+                message: error.message,
+                status: error.status,
+            });
+        }
+        return res.status(500).json({
+            message: "Ocurrió un error inesperado",
+            status: "error",
+        });
     }
 }
 
-export const getSalesByDate = async (req, res) => {
+export const getSalesByDate = async (req: Request, res: Response): Promise<Response> => {
     try {
 
-        const sales = await SaleService.findByDate(req.body)
+        const sales: saleDB[] = await SaleService.findByDate(req.body)
+
         if (!sales || sales.length === 0) {
             throw ({
                 statusCode: 404,
@@ -56,17 +73,23 @@ export const getSalesByDate = async (req, res) => {
         return res.json(sales)
 
     } catch (error) {
-        return res.status(error.statusCode || 500).json({
-            message: error.message,
-            status: error.status,
-        })
+        if (error instanceof CustomError) {
+            return res.status(error.statusCode).json({
+                message: error.message,
+                status: error.status,
+            });
+        }
+        return res.status(500).json({
+            message: "Ocurrió un error inesperado",
+            status: "error",
+        });
     }
 }
 
-export const getSalesByUser = async (req, res) => {
+export const getSalesByUser = async (req: Request, res: Response): Promise<Response> => {
     try {
 
-        const sales = await SaleService.findByUser(req.params.id)
+        const sales: saleDB[] = await SaleService.findByUser(req.params.id)
         if (!sales || sales.length === 0) {
             throw ({
                 statusCode: 404,
@@ -77,14 +100,20 @@ export const getSalesByUser = async (req, res) => {
         return res.json(sales)
 
     } catch (error) {
-        return res.status(error.statusCode || 500).json({
-            message: error.message,
-            status: error.status,
-        })
+        if (error instanceof CustomError) {
+            return res.status(error.statusCode).json({
+                message: error.message,
+                status: error.status,
+            });
+        }
+        return res.status(500).json({
+            message: "Ocurrió un error inesperado",
+            status: "error",
+        });
     }
 }
 
-export const createSale = async (req, res) => {
+export const createSale = async (req: Request, res: Response): Promise<Response> => {
     try {
 
         await SaleService.create(req.body)
@@ -94,9 +123,15 @@ export const createSale = async (req, res) => {
         })
 
     } catch (error) {
-        return res.status(error.statusCode || 500).json({
-            message: error.message,
-            status: error.status,
-        })
+        if (error instanceof CustomError) {
+            return res.status(error.statusCode).json({
+                message: error.message,
+                status: error.status,
+            });
+        }
+        return res.status(500).json({
+            message: "Ocurrió un error inesperado",
+            status: "error",
+        });
     }
 }

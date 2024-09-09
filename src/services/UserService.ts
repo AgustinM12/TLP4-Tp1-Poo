@@ -3,10 +3,11 @@ import { generateToken } from "../helpers/jwt"
 import { verifyPassword } from "../helpers/validatePassword"
 import { userDB } from "../types/dataFromDb"
 import { CustomError } from "../models/CustomErrors"
+import { ObjectId } from "mongoose";
 
 class UserService {
 
-    async findOne(id: string): Promise<userDB> {
+    async findOne(id: string | ObjectId): Promise<userDB> {
         try {
             return await User.findById(id)
         } catch (error) {

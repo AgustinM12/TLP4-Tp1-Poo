@@ -27,7 +27,6 @@ export const getUserById = async (req: Request, res: Response): Promise<Response
     }
 }
 
-
 export const getUserByNameOrEmail = async (req: Request, res: Response): Promise<Response> => {
     try {
         const user: IUser | null = await UserService.findByNameOrEmail(req.body);

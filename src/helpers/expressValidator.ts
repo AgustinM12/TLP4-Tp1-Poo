@@ -15,7 +15,7 @@ export const validateSchema = (allowedFields: string[]) => (req: Request, res: R
     }
 
     if (!errors.isEmpty()) {
-        const formattedErrors = errors.array().reduce((acc: Record<string, string[]>, error: ValidationError) => {
+        const formattedErrors = errors.array().reduce((acc: Record<string, string[]>, error: any) => {
             const { path, msg } = error;
             if (!acc[path]) {
                 acc[path] = [];

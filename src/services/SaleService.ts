@@ -1,20 +1,21 @@
-import { Sale } from "../models/Sale.js";
+import { ISale, Sale } from "../models/Sale.js";
+import { saleDB, userDB } from "../types/dataFromDb.js";
+import { ObjectId } from "mongoose"
 import UserService from "./UserService.js";
 import ProductService from "./ProductService.js"
 import dayjs from "dayjs";
 
 class SaleService {
-    constructor() { }
 
-    async findAll() {
+    async findAll(): Promise<saleDB[]> {
         try {
             return await Sale.find()
         } catch (error) {
-            throw new Error(error.message || "No hay ventas registradas");
+            throw new Error("No hay ventas registradas");
         }
     }
 
-    async findOne(id) {
+    async findOne(id: string | ObjectId): Promise<saleDB> {
         try {
             return await Sale.findById(id)
         } catch (error) {
@@ -22,15 +23,15 @@ class SaleService {
         }
     }
 
-    async findByDate(date) {
+    async findByDate(date: string): Promise<saleDB[]> {
         try {
-            return await Sale.find(date)
+            return await Sale.find({ date })
         } catch (error) {
             throw new Error("No hay registro de ventas en esa fecha");
         }
     }
 
-    async findByUser(id) {
+    async findByUser(id: string): Promise<saleDB[]> {
         try {
             return await Sale.find({ idSeller: id })
         } catch (error) {
@@ -38,14 +39,15 @@ class SaleService {
         }
     }
 
-    async create(cart) {
+    async create(cart: ISale): Promise<saleDB> {
         try {
 
             if (cart.amount.length !== cart.products.length) {
                 throw new Error("Las cantidades no coinciden con los productos");
             }
 
-            const client = await UserService.findOne(cart.idClient)
+            const client: userDB = await UserService.findOne(cart.idClient)
+
             if (!client || client.role !== "CLIENT") {
                 throw new Error("El ID no corresponde al de un cliente");
             }
@@ -95,7 +97,7 @@ class SaleService {
             })
 
         } catch (error) {
-            throw new Error(error.message || "Error al registrar venta")
+            throw new Error("Error al registrar venta")
         }
     }
 
