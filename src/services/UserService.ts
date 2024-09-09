@@ -1,7 +1,7 @@
 import { User, IUserModel, IUser } from "../models/User";
 import { generateToken } from "../helpers/jwt"
 import { verifyPassword } from "../helpers/validatePassword"
-import { userDB } from "../types/userFromDb"
+import { userDB } from "../types/dataFromDb"
 import { CustomError } from "../models/CustomErrors"
 
 class UserService {

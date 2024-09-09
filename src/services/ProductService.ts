@@ -1,4 +1,6 @@
 import { Product } from "../models/Product.js";
+import { CustomError } from "../models/CustomErrors.js";
+import { productDB } from "../types/dataFromDb"
 
 class ProductService {
     constructor() { }

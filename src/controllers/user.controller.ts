@@ -3,7 +3,7 @@ import UserService from "../services/UserService"
 import { CustomError } from "../models/CustomErrors";
 import { IUser } from "../models/User"
 
-export const getUserById = async (req: Request, res: Response) => {
+export const getUserById = async (req: Request, res: Response): Promise<Response> => {
 
     try {
         const user: IUser | null = await UserService.findOne(req.params.id);
@@ -28,7 +28,7 @@ export const getUserById = async (req: Request, res: Response) => {
 }
 
 
-export const getUserByNameOrEmail = async (req: Request, res: Response) => {
+export const getUserByNameOrEmail = async (req: Request, res: Response): Promise<Response> => {
     try {
         const user: IUser | null = await UserService.findByNameOrEmail(req.body);
         if (!user) {
@@ -54,7 +54,7 @@ export const getUserByNameOrEmail = async (req: Request, res: Response) => {
     }
 }
 
-export const getUsersByRole = async (req: Request, res: Response) => {
+export const getUsersByRole = async (req: Request, res: Response): Promise<Response> => {
     try {
         const users = await UserService.findByRole(req.params.role);
 
@@ -81,7 +81,7 @@ export const getUsersByRole = async (req: Request, res: Response) => {
     }
 }
 
-export const createClient = async (req: Request, res: Response) => {
+export const createClient = async (req: Request, res: Response): Promise<Response> => {
     try {
         await UserService.createClient(req.body)
 
@@ -104,7 +104,7 @@ export const createClient = async (req: Request, res: Response) => {
 
 }
 
-export const createSeller = async (req: Request, res: Response) => {
+export const createSeller = async (req: Request, res: Response): Promise<Response> => {
     try {
         await UserService.createSeller(req.body)
 
@@ -125,7 +125,7 @@ export const createSeller = async (req: Request, res: Response) => {
     }
 }
 
-export const deleteUser = async (req: Request, res: Response) => {
+export const deleteUser = async (req: Request, res: Response): Promise<Response> => {
     try {
         await UserService.delete(req.params.id)
 
@@ -146,7 +146,7 @@ export const deleteUser = async (req: Request, res: Response) => {
     }
 }
 
-export const login = async (req: Request, res: Response) => {
+export const login = async (req: Request, res: Response): Promise<Response> => {
     try {
         const token: string = await UserService.login(req.body)
 

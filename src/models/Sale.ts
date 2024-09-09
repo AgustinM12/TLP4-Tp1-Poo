@@ -1,4 +1,16 @@
-import { model, Schema } from "mongoose"
+import { model, Schema, Document, ObjectId } from "mongoose"
+
+export interface ISale extends Document {
+    date: string,
+    products: ObjectId[],
+    amount: [],
+    totalPrice: number,
+    price: number,
+    taxes: number,
+    discount: number,
+    idClient: ObjectId,
+    idSeller: ObjectId
+}
 
 const SaleSchema = new Schema({
 
@@ -28,4 +40,4 @@ const SaleSchema = new Schema({
     timestamps: true
 })
 
-export const Sale = model("sales", SaleSchema)
+export const Sale = model<ISale>("sales", SaleSchema)
