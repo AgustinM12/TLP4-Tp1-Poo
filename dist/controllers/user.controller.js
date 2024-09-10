@@ -11,46 +11,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.login = exports.deleteUser = exports.createSeller = exports.createClient = exports.getUsersByRole = exports.getUserByNameOrEmail = exports.getUserById = void 0;
+exports.login = exports.getUsersByRole = exports.getUserByNameOrEmail = exports.getUserById = exports.deleteUser = exports.createSeller = exports.createClient = void 0;
 const UserService_1 = __importDefault(require("../services/UserService"));
 const CustomErrors_1 = require("../models/CustomErrors");
-const getUserById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const user = yield UserService_1.default.findOne(req.params.id);
-        if (!user) {
-            throw new CustomErrors_1.CustomError("No se encontro al usuario", 404);
-        }
-        return res.json(user);
-    }
-    catch (error) {
-        if (error instanceof CustomErrors_1.CustomError) {
-            return res.status(error.statusCode).json({
-                message: error.message,
-                status: error.status,
-            });
-        }
-        // Manejo de otros errores (por ejemplo, errores internos del servidor)
-        return res.status(500).json({
-            message: "Ocurrió un error inesperado",
-            status: "error",
-        });
-    }
-});
-exports.getUserById = getUserById;
-const getUserByNameOrEmail = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const user = yield UserService_1.default.findByNameOrEmail(req.body);
-        if (!user) {
-            throw ({
-                statusCode: 404,
-                status: "Not Found",
-                message: "No se encontro al usuario",
-            });
-        }
-        return res.json(user);
-    }
-    catch (error) {
+class UserControllers {
+    handleError(error, res) {
         if (error instanceof CustomErrors_1.CustomError) {
             return res.status(error.statusCode).json({
                 message: error.message,
@@ -62,117 +29,100 @@ const getUserByNameOrEmail = (req, res) => __awaiter(void 0, void 0, void 0, fun
             status: "error",
         });
     }
-});
-exports.getUserByNameOrEmail = getUserByNameOrEmail;
-const getUsersByRole = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const users = yield UserService_1.default.findByRole(req.params.role);
-        if (!users) {
-            throw ({
-                statusCode: 404,
-                status: "Not Found",
-                message: "No se encontraron usuarios",
-            });
-        }
-        return res.json(users);
-    }
-    catch (error) {
-        if (error instanceof CustomErrors_1.CustomError) {
-            return res.status(error.statusCode).json({
-                message: error.message,
-                status: error.status,
-            });
-        }
-        return res.status(500).json({
-            message: "Ocurrió un error inesperado",
-            status: "error",
+    getUserById(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const user = yield UserService_1.default.findOne(req.params.id);
+                if (!user) {
+                    throw new CustomErrors_1.CustomError("No se encontro al usuario", 404);
+                }
+                return res.json(user);
+            }
+            catch (error) {
+                return this.handleError(error, res);
+            }
         });
     }
-});
-exports.getUsersByRole = getUsersByRole;
-const createClient = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        yield UserService_1.default.createClient(req.body);
-        return res.status(201).json({
-            message: 'Cliente registrado'
+    getUserByNameOrEmail(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const user = yield UserService_1.default.findByNameOrEmail(req.body);
+                if (!user) {
+                    throw new CustomErrors_1.CustomError("No se encontro al usuario", 404);
+                }
+                return res.json(user);
+            }
+            catch (error) {
+                return this.handleError(error, res);
+            }
         });
     }
-    catch (error) {
-        if (error instanceof CustomErrors_1.CustomError) {
-            return res.status(error.statusCode).json({
-                message: error.message,
-                status: error.status,
-            });
-        }
-        return res.status(500).json({
-            message: "Ocurrió un error inesperado",
-            status: "error",
+    getUsersByRole(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const users = yield UserService_1.default.findByRole(req.params.role);
+                if (!users) {
+                    throw new CustomErrors_1.CustomError("No se encontraron usuarios", 404);
+                }
+                return res.json(users);
+            }
+            catch (error) {
+                return this.handleError(error, res);
+            }
         });
     }
-});
-exports.createClient = createClient;
-const createSeller = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        yield UserService_1.default.createSeller(req.body);
-        return res.status(201).json({
-            message: 'Usuario registrado'
+    createClient(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                yield UserService_1.default.createClient(req.body);
+                return res.status(201).json({
+                    message: 'Cliente registrado'
+                });
+            }
+            catch (error) {
+                return this.handleError(error, res);
+            }
         });
     }
-    catch (error) {
-        if (error instanceof CustomErrors_1.CustomError) {
-            return res.status(error.statusCode).json({
-                message: error.message,
-                status: error.status,
-            });
-        }
-        return res.status(500).json({
-            message: "Ocurrió un error inesperado",
-            status: "error",
+    createSeller(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                yield UserService_1.default.createSeller(req.body);
+                return res.status(201).json({
+                    message: 'Usuario registrado'
+                });
+            }
+            catch (error) {
+                return this.handleError(error, res);
+            }
         });
     }
-});
-exports.createSeller = createSeller;
-const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        yield UserService_1.default.delete(req.params.id);
-        return res.status(201).json({
-            message: 'Usuario Eliminado'
+    deleteUser(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                yield UserService_1.default.delete(req.params.id);
+                return res.status(201).json({
+                    message: 'Usuario Eliminado'
+                });
+            }
+            catch (error) {
+                return this.handleError(error, res);
+            }
         });
     }
-    catch (error) {
-        if (error instanceof CustomErrors_1.CustomError) {
-            return res.status(error.statusCode).json({
-                message: error.message,
-                status: error.status,
-            });
-        }
-        return res.status(500).json({
-            message: "Ocurrió un error inesperado",
-            status: "error",
+    login(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const token = yield UserService_1.default.login(req.body);
+                return res.status(201).json({
+                    message: 'Login correcto', token
+                });
+            }
+            catch (error) {
+                return this.handleError(error, res);
+            }
         });
     }
-});
-exports.deleteUser = deleteUser;
-const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const token = yield UserService_1.default.login(req.body);
-        console.log(token);
-        return res.status(201).json({
-            message: 'Login correcto', token
-        });
-    }
-    catch (error) {
-        if (error instanceof CustomErrors_1.CustomError) {
-            return res.status(error.statusCode).json({
-                message: error.message,
-                status: error.status,
-            });
-        }
-        return res.status(500).json({
-            message: "Ocurrió un error inesperado",
-            status: "error",
-        });
-    }
-});
-exports.login = login;
+}
+_a = new UserControllers(), exports.createClient = _a.createClient, exports.createSeller = _a.createSeller, exports.deleteUser = _a.deleteUser, exports.getUserById = _a.getUserById, exports.getUserByNameOrEmail = _a.getUserByNameOrEmail, exports.getUsersByRole = _a.getUsersByRole, exports.login = _a.login;
 //# sourceMappingURL=user.controller.js.map

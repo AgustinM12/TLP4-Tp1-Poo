@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { createSale, getSaleById, getSales, getSalesByDate, getSalesByUser } from "../controllers/sale.controller.js"
 
-import { validateCreateSale, validateSaleId, validateDate, validateParamsId, validateHeader } from "../validators/sale.validation.js"
+import { validateCreateSale, validateSaleId, validateDate, validateHeader } from "../validators/sale.validation.js"
 
 import { verifyToken, verifyAdminOrSeller } from "../helpers/jwt.js"
 
